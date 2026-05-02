@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./notes.db');
@@ -31,6 +32,7 @@ const dbRun = (sql, params = []) =>
   });
 
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 // allow JSON in requests

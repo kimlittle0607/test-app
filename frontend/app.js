@@ -1,5 +1,7 @@
+const API = 'https://test-app-boiw.onrender.com';
+
 async function loadNotes() {
-  const res = await fetch('/notes');
+  const res = await fetch(`${API}/notes`);
   const notes = await res.json();
 
   const list = document.getElementById('notesList');
@@ -14,7 +16,7 @@ async function loadNotes() {
     const button = document.createElement('button');
     button.textContent = 'Delete';
     button.onclick = async () => {
-      await fetch(`/notes/${n.id}`, { method: 'DELETE' });
+      await fetch(`${API}/notes/${n.id}`, { method: 'DELETE' });
       loadNotes();
     };
 
@@ -24,7 +26,7 @@ async function loadNotes() {
       const newText = prompt('Edit note:', n.text);
       if (newText == null) return; // cancelled
 
-      await fetch(`/notes/${n.id}`, {
+      await fetch(`${API}/notes/${n.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: newText })
@@ -43,7 +45,7 @@ async function loadNotes() {
 async function addNote() {
   const input = document.getElementById('noteInput');
 
-  await fetch('/notes', {
+  await fetch(`${API}/notes`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text: input.value })
