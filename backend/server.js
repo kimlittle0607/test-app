@@ -1,49 +1,42 @@
 const express = require('express');
 const cors = require('cors');
 
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./notes.db');
-
-// ensure table exists
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS notes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      text TEXT
-    )
-  `);
-});
-
-// Promise wrappers for sqlite3
-const dbAll = (sql, params = []) =>
-  new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
-    });
-  });
-
-const dbRun = (sql, params = []) =>
-  new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
-      if (err) reject(err);
-      else resolve(this);
-    });
-  });
+const { Pool } = require('pg');
 
 const app = express();
 app.use(cors());
 const PORT = process.env.PORT || 3000;
 
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
 // allow JSON in requests
 app.use(express.json());
 app.use(express.static('frontend'));
 
+(async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS notes (
+        id SERIAL PRIMARY KEY,
+        text TEXT
+      )
+    `);
+    console.log('Notes table ready');
+  } catch (err) {
+    console.error('Error creating table', err);
+  }
+})();
+
 // GET all notes
 app.get('/notes', async (req, res) => {
   try {
-    const rows = await dbAll('SELECT * FROM notes');
-    res.json(rows);
+    const result = await pool.query('SELECT * FROM notes ORDER BY id DESC');
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -53,8 +46,11 @@ app.get('/notes', async (req, res) => {
 app.post('/notes', async (req, res) => {
   try {
     const { text } = req.body;
-    const result = await dbRun('INSERT INTO notes (text) VALUES (?)', [text]);
-    res.json({ id: result.lastID, text });
+    const result = await pool.query(
+      'INSERT INTO notes (text) VALUES ($1) RETURNING *',
+      [text]
+    );
+    res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -64,7 +60,7 @@ app.post('/notes', async (req, res) => {
 app.delete('/notes/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    await dbRun('DELETE FROM notes WHERE id = ?', [id]);
+    await pool.query('DELETE FROM notes WHERE id = $1', [id]);
     res.json({ message: 'Note deleted', id });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -76,7 +72,10 @@ app.put('/notes/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const { text } = req.body;
-    await dbRun('UPDATE notes SET text = ? WHERE id = ?', [text, id]);
+    await pool.query(
+      'UPDATE notes SET text = $1 WHERE id = $2',
+      [text, id]
+    );
     res.json({ message: 'Updated', id, text });
   } catch (err) {
     res.status(500).json({ error: err.message });
