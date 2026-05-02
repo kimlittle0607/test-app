@@ -63,7 +63,7 @@ app.delete('/notes/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     await dbRun('DELETE FROM notes WHERE id = ?', [id]);
-    res.json({ message: 'Deleted', id });
+    res.json({ message: 'Note deleted', id });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
