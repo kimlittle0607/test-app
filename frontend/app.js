@@ -1,4 +1,6 @@
-const API = 'https://test-app-boiw.onrender.com';
+const API = window.location.hostname === 'localhost'
+  ? 'http://localhost:3000'
+  : 'https://test-app-boiw.onrender.com';
 
 async function loadNotes() {
   const res = await fetch(`${API}/notes`);
