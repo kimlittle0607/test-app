@@ -4,12 +4,32 @@
   <title>Notes App</title>
 </head>
 <body>
-  <h1>Notes</h1>
+  <h1>Notes App</h1>
 
-  <input id="noteInput" placeholder="Write a note">
-  <button onclick="addNote()">Add</button>
+  <!-- Login Section -->
+  <div id="loginSection" style="display:none;">
+    <h2>Login</h2>
+    <form onsubmit="login(event)">
+      <input id="email" placeholder="Email" required />
+      <br /><br />
+      <input id="password" type="password" placeholder="Password" required />
+      <br /><br />
+      <button type="submit">Login</button>
+      <br /><br />
+      <button type="button" onclick="register(event)">Register</button>
+    </form>
+  </div>
 
-  <ul id="notesList"></ul>
+  <!-- App Section -->
+  <div id="appSection" style="display:none;">
+    <input id="noteInput" placeholder="Write a note">
+    <button onclick="addNote()">Add</button>
+
+    <ul id="notesList"></ul>
+
+    <br />
+    <button onclick="logout()">Logout</button>
+  </div>
 
   <script src="app.js"></script>
 </body>
