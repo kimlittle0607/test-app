@@ -11,7 +11,7 @@ async function login(event) {
   const password = document.getElementById('password').value;
 
   try {
-    const res = await fetch(`${API}/login`, {
+    const res = await fetch(`${API}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -41,7 +41,7 @@ async function register(event) {
   const password = document.getElementById('password').value;
 
   try {
-    const res = await fetch(`${API}/register`, {
+    const res = await fetch(`${API}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -55,7 +55,7 @@ async function register(event) {
     }
 
     // auto-login after register
-    const loginRes = await fetch(`${API}/login`, {
+    const loginRes = await fetch(`${API}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
