@@ -19,6 +19,7 @@ async function getWeatherAdvice({ lat, lon, shortsThreshold = 20, jumperThreshol
 
   const {
     currentTemperature,
+    currentTime,
     highTemperature,
     hourlyTimes,
     hourlyTemps,
@@ -27,35 +28,37 @@ async function getWeatherAdvice({ lat, lon, shortsThreshold = 20, jumperThreshol
   } = base;
 
   // --- Trend (Rising / Peak / Cooling) ---
-  const now = new Date();
+  let trend;
 
-  // Find next hour temperature for today
-  let nextTemp = null;
-  for (let i = 0; i < hourlyTimes.length; i++) {
-    const t = new Date(hourlyTimes[i]);
-    if (t > now && hourlyTimes[i].startsWith(todayDateStr)) {
-      nextTemp = hourlyTemps[i];
-      break;
+  // Find index of current time from API (timezone-safe)
+  // Find index by matching prefix (handles seconds mismatch)
+  let currentIndex = hourlyTimes.findIndex(t => t.startsWith(currentTime));
+
+  if (currentIndex === -1) {
+    // fallback: find closest past time
+    for (let i = hourlyTimes.length - 1; i >= 0; i--) {
+      if (hourlyTimes[i] < currentTime) {
+        currentIndex = i;
+        break;
+      }
     }
   }
 
-  let trend;
+  let prevTemp = null;
+  if (currentIndex > 0) {
+    prevTemp = hourlyTemps[currentIndex - 1];
+  }
 
-  if (nextTemp !== null) {
-    if (nextTemp > currentTemperature) {
+  if (prevTemp !== null) {
+    if (currentTemperature > prevTemp) {
       trend = { state: 'rising', message: 'Rising' };
-    } else if (nextTemp < currentTemperature) {
+    } else if (currentTemperature < prevTemp) {
       trend = { state: 'cooling', message: 'Cooling' };
     } else {
       trend = { state: 'peak', message: 'Peak reached' };
     }
   } else {
-    const nearPeak = Math.abs(currentTemperature - highTemperature) < 0.5;
-    if (nearPeak) {
-      trend = { state: 'peak', message: 'Peak reached' };
-    } else {
-      trend = { state: 'steady', message: '' };
-    }
+    trend = { state: 'peak', message: 'Peak reached' };
   }
 
   // Progress

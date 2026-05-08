@@ -22,12 +22,14 @@ async function getWeather({ lat, lon }) {
     const data = await res.json();
 
     const currentTemp = data.current_weather.temperature;
+    const currentTime = data.current_weather.time;
 
     // Today's high
     const todayHigh = data.daily.temperature_2m_max[0];
 
     return {
       currentTemperature: currentTemp,
+      currentTime: currentTime,
       highTemperature: todayHigh,
       hourlyTimes: data.hourly.time,
       hourlyTemps: data.hourly.temperature_2m,
