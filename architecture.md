@@ -26,6 +26,8 @@ All data operations are scoped by `user_id` to enforce multi-user isolation.
 
 This structure cleanly separates concerns and allows the backend to serve multiple clients (web, mobile, etc.) without modification.
 
+The backend also integrates with external APIs via services. For example, the weather service fetches data from a third-party API (Open-Meteo), processes it (e.g. computing when the temperature reaches a user-defined threshold), and exposes it via the `/weather` endpoint.
+
 ---
 
 # Architecture
@@ -36,8 +38,10 @@ This structure cleanly separates concerns and allows the backend to serve multip
   /middleware/auth.js
   /routes/authRoutes.js
   /routes/notesRoutes.js
+  /routes/weatherRoutes.js
   /services/authService.js
   /services/notesService.js
+  /services/weatherService.js
 
 ---
 
@@ -49,6 +53,7 @@ GET    /notes
 POST   /notes  
 PUT    /notes/:id  
 DELETE /notes/:id  
+GET    /weather
 
 ---
 
