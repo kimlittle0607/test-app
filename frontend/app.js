@@ -1,10 +1,15 @@
+// ---- Config ----
+// API base URL (local vs production)
 const API = window.location.hostname === 'localhost'
   ? 'http://localhost:3000'
   : 'https://test-app-boiw.onrender.com';
 
+// ---- Auth ----
+// Handles login, registration, and session state
 let token = localStorage.getItem('token');
 
 async function login(event) {
+  // Authenticate user and store JWT
   if (event) event.preventDefault();
 
   const email = document.getElementById('email').value;
@@ -29,12 +34,14 @@ async function login(event) {
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('appSection').style.display = 'block';
     loadNotes();
+    if (typeof initWeather === 'function') initWeather();
   } catch (err) {
     alert('Network error during login');
   }
 }
 
 async function register(event) {
+  // Create account then auto-login
   if (event) event.preventDefault();
 
   const email = document.getElementById('email').value;
@@ -73,6 +80,7 @@ async function register(event) {
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('appSection').style.display = 'block';
     loadNotes();
+    if (typeof initWeather === 'function') initWeather();
   } catch (err) {
     alert('Network error during registration');
   }
@@ -86,7 +94,10 @@ function logout() {
   document.getElementById('appSection').style.display = 'none';
 }
 
+// ---- Notes ----
+// CRUD operations for user notes
 async function loadNotes() {
+  // Fetch notes for current user
   try {
     const res = await fetch(`${API}/notes`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -163,6 +174,8 @@ async function addNote() {
   loadNotes();
 }
 
+// ---- Init ----
+// App entry point on page load
 window.onload = () => {
   const loginSection = document.getElementById('loginSection');
   const appSection = document.getElementById('appSection');
@@ -174,5 +187,6 @@ window.onload = () => {
     loginSection.style.display = 'none';
     appSection.style.display = 'block';
     loadNotes();
+    if (typeof initWeather === 'function') initWeather();
   }
 };

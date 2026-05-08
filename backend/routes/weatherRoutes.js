@@ -1,26 +1,27 @@
-
-
 const express = require('express');
-const weatherService = require('../services/weatherService');
+const weatherAdvisorService = require('../services/weatherAdvisorService');
 
 const router = express.Router();
 
-// GET /weather?lat=...&lon=...&threshold=...
+// GET /weather?lat=...&lon=...&shorts=...&jumper=...&indoor=...&blinds=...
 router.get('/', async (req, res) => {
   try {
-    const latitude = parseFloat(req.query.lat);
-    const longitude = parseFloat(req.query.lon);
+    const lat = parseFloat(req.query.lat);
+    const lon = parseFloat(req.query.lon);
 
-    // Optional threshold override
-    const threshold = req.query.threshold
-      ? parseFloat(req.query.threshold)
-      : undefined;
+    const shortsThreshold = req.query.shorts ? parseFloat(req.query.shorts) : 20;
+    const jumperThreshold = req.query.jumper ? parseFloat(req.query.jumper) : 18;
+    const indoorTarget = req.query.indoor ? parseFloat(req.query.indoor) : 22;
+    const blindsThreshold = req.query.blinds ? parseFloat(req.query.blinds) : 24;
 
-    const result = await weatherService.getWeather(
-      latitude,
-      longitude,
-      threshold
-    );
+    const result = await weatherAdvisorService.getWeatherAdvice({
+      lat,
+      lon,
+      shortsThreshold,
+      jumperThreshold,
+      indoorTarget,
+      blindsThreshold
+    });
 
     res.json(result);
   } catch (err) {

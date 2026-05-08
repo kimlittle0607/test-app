@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Notes App</title>
+  <title>Test App</title>
 </head>
 <body>
-  <h1>Notes App</h1>
+  <h1>Test App</h1>
 
   <!-- Login Section -->
   <div id="loginSection" style="display:none;">
@@ -22,15 +22,46 @@
 
   <!-- App Section -->
   <div id="appSection" style="display:none;">
-    <input id="noteInput" placeholder="Write a note">
-    <button onclick="addNote()">Add</button>
+    <div style="margin-top:20px; padding:16px; border:1px solid #ddd; border-radius:12px; max-width:320px;">
+      <h2 style="margin-top:0; font-family:-apple-system, BlinkMacSystemFont, sans-serif;">Weather</h2>
+      <div id="weatherSection"></div>
+      <div style="margin-top:12px; font-family:-apple-system, BlinkMacSystemFont, sans-serif;">
+      <div style="font-size:13px; margin-bottom:6px;">Preferences</div>
 
-    <ul id="notesList"></ul>
+      <div style="margin-bottom:6px;">
+        <label style="font-size:12px;">Shorts (°C): </label>
+        <input id="shortsThresholdInput" type="number" value="20" style="width:60px;" />
+      </div>
 
-    <br />
-    <button onclick="logout()">Logout</button>
+      <div style="margin-bottom:6px;">
+        <label style="font-size:12px;">Indoor Max (°C): </label>
+        <input id="indoorTargetInput" type="number" value="22" style="width:60px;" />
+      </div>
+
+      <div style="margin-bottom:6px;">
+        <label style="font-size:12px;">Blinds (°C): </label>
+        <input id="blindsThresholdInput" type="number" value="24" style="width:60px;" />
+      </div>
+
+      <div style="margin-bottom:6px;">
+        <label style="font-size:12px;">Jumper (°C): </label>
+        <input id="jumperThresholdInput" type="number" value="18" style="width:60px;" />
+      </div>
+
+      <button onclick="refreshWeather()" style="margin-top:6px;">Refresh</button>
+      </div>
+    </div>
+    <div style="margin-top:20px; padding:16px; border:1px solid #ddd; border-radius:12px; max-width:320px;">
+      <h2 style="margin-top:0; font-family:-apple-system, BlinkMacSystemFont, sans-serif;">Notes</h2>
+      <input id="noteInput" placeholder="Write a note">
+      <button onclick="addNote()">Add</button>
+      <ul id="notesList"></ul>
+      <br />
+      <button onclick="logout()">Logout</button>
+    </div>
   </div>
 
+  <script src="weatherWidget.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
