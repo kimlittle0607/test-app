@@ -36,9 +36,11 @@ app.use(express.static('frontend'));
 
 const authRoutes = require('./routes/authRoutes');
 const notesRoutes = require('./routes/notesRoutes');
+const weatherRoutes = require('./routes/weatherRoutes');
 
 app.use('/auth', authRoutes);
 app.use('/notes', notesRoutes);
+app.use('/weather', weatherRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
